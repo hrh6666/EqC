@@ -1,0 +1,78 @@
+defaults:
+  - _self_
+
+mode: training
+seed: 0
+task_suite: libero_goal
+task_id: 0
+devices: [0]
+
+policy:
+  per_action_noise: false
+
+# Set dataset_root before training or evaluation. The directory must contain
+# LIBERO .zarr suite datasets.
+paths:
+  dataset_root: ???
+  save_root: ./runs
+
+pretrained:
+  t5: google-t5/t5-base
+  vit: facebook/dinov2-base
+
+training:
+  steps: 50000
+  checkpoint_interval: 2500
+  resume_ckpt: null
+  dataloader:
+    batch_size: 256
+    num_workers: 8
+    shuffle: true
+    persistent_workers: true
+  precision: bf16-mixed
+  strategy: ddp_find_unused_parameters_true
+  accumulate_grad_batches: 1
+
+# Disabled by default. Enable only after configuring your own W&B account.
+wandb:
+  enabled: false
+  project: eqc
+  entity: null
+  group: null
+  job_type: ${mode}
+  name: null
+  tags: []
+  mode: offline
+  log_model: false
+
+constants:
+  To: 1
+  Ta: 16
+  num_act_exec: 8
+  norm_params: [0.5, 0.5, 0.5]
+
+inference:
+  # Required for mode=inference; override with an absolute checkpoint path.
+  ckpt_file: ???
+  temperature: 1.0
+  task_ids: all
+  max_init_states: null
+  num_dummy_steps: 2
+  num_candidates: 1
+  max_workers: 1
+
+sampler_config:
+  name: gd
+
+scheduler_config:
+  name: custom
+  params:
+    steps: 32
+    stepsize_list:
+      [0.039, 0.038, 0.038, 0.036, 0.035, 0.033, 0.030, 0.028, 0.025, 0.022,
+       0.020, 0.017, 0.015, 0.013, 0.011, 0.010, 0.010, 0.010, 0.010, 0.010,
+       0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010, 0.010,
+       0.010, 0.010]
+
+stopper_config:
+  name: "null"

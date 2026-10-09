@@ -1,0 +1,10 @@
+torch>=2.0
+torchvision
+pytorch-lightning>=2.0
+hydra-core>=1.3
+omegaconf>=2.3
+transformers>=4.30
+einops
+numpy
+gym
+termcolor
