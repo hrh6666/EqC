@@ -52,6 +52,8 @@ the equilibrium energy objective, energy-gradient action refinement, and the LIB
 
 ## Installation
 
+The code is tested with Python 3.10 and CUDA-enabled PyTorch.
+
 ```bash
 conda create -n eqc python=3.10 && conda activate eqc
 pip install -r requirements.txt
@@ -61,8 +63,12 @@ git clone -b lightning https://github.com/CleanDiffuserTeam/CleanDiffuser.git
 pip install -e CleanDiffuser
 ```
 
-Then install [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) and prepare the LIBERO datasets in the
-CleanDiffuser `.zarr` format:
+Then install [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) following the CleanDiffuser documentation.
+The pretrained T5 and DINOv2 encoders are downloaded from Hugging Face on the first run.
+
+### Data
+
+Convert the LIBERO datasets to the CleanDiffuser `.zarr` format and place them under a single directory:
 
 ```text
 DATASET_ROOT/
@@ -72,36 +78,74 @@ DATASET_ROOT/
 └── libero_10.zarr
 ```
 
+Supported task suites: `libero_goal`, `libero_spatial`, `libero_object`, and `libero_10`.
+
 ## Training
 
 ```bash
-bash scripts/train_libero.sh DATASET_ROOT RUNS_DIR libero_goal 0
+bash scripts/train_libero.sh DATASET_ROOT RUNS_DIR TASK_SUITE GPU_IDS [HYDRA_OVERRIDES...]
+
+# example
+bash scripts/train_libero.sh /path/to/libero_zarr ./runs libero_goal 0 training.steps=40000
 ```
 
-Arguments are the dataset root, output directory, task suite, and GPU id(s). Any extra arguments are passed to Hydra
-as overrides, e.g. `training.steps=40000`.
+The script is a thin wrapper around the Hydra entry point; the equivalent direct call is
+
+```bash
+python eqc.py mode=training task_suite=libero_goal \
+  paths.dataset_root=/path/to/libero_zarr paths.save_root=./runs
+```
+
+Common overrides:
+
+| Override | Description |
+|---|---|
+| `training.steps=40000` | Number of training steps |
+| `training.dataloader.batch_size=128` | Global batch size (default 256) |
+| `training.resume_ckpt=/path/to/ckpt` | Resume from a checkpoint |
+| `seed=1` | Random seed |
+| `devices='[0,1]'` | Multi-GPU training (also set `GPU_IDS=0,1`) |
+| `wandb.enabled=true wandb.mode=online` | Log to Weights & Biases (disabled by default) |
 
 ## Evaluation
 
 ```bash
-bash scripts/eval_libero.sh DATASET_ROOT /path/to/step=40000.ckpt libero_goal 0
+bash scripts/eval_libero.sh DATASET_ROOT CHECKPOINT TASK_SUITE GPU_IDS [HYDRA_OVERRIDES...]
+
+# example
+bash scripts/eval_libero.sh /path/to/libero_zarr ./runs/libero_goal/checkpoints/step=40000.ckpt libero_goal 0
 ```
 
-The script reports per-task and overall success rates.
+The script reports the success of each trial, per-task success counts, and the overall success rate. For a quick
+sanity check, evaluate a single task and initial state:
+
+```bash
+bash scripts/eval_libero.sh /path/to/libero_zarr /path/to/step=40000.ckpt libero_goal 0 \
+  'inference.task_ids=[0]' inference.max_init_states=1
+```
+
+## Method Configuration
+
+At inference, EqC starts from noise and refines the whole action chunk by gradient ascent on the learned energy,
+`x ← x + η_k ∇_x E(x | o)`. The relevant settings in `conf/config.yaml` are:
+
+- `sampler_config`: `gd`, energy-gradient refinement;
+- `scheduler_config`: `custom`, a fixed 32-step step-size schedule `η_k` (decaying from 0.039 to 0.010);
+- `stopper_config`: `null`, always uses the full refinement budget.
 
 ## Code Structure
 
 ```text
-eqc.py                 Hydra entry point
-conf/config.yaml       Training and inference configuration
-eqc/model.py           Energy model, EqC objective, and action refinement
-eqc/pipeline.py        LIBERO data loading, training, and evaluation
-policy/                Transport utilities, refinement sampler, step schedule, and stopper
-scripts/               Training and evaluation wrappers
+eqc.py                       Hydra entry point
+conf/config.yaml             Training and inference configuration
+eqc/model.py                 Energy model, EqC objective, and action refinement
+eqc/pipeline.py              LIBERO data loading, training, and evaluation
+policy/eqc/                  Transport and interpolation utilities
+policy/eqc_samplers/         Energy-gradient refinement sampler
+policy/eqc_step_schedulers/  Step-size schedule
+policy/eqc_stoppers/         Stopping criterion
+scripts/                     Training and evaluation wrappers
 ```
-
-Inference refines each action chunk with 32 energy-gradient steps using the step-size schedule in
-`conf/config.yaml`.
 
 ## Citation
 
