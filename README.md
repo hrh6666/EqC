@@ -231,8 +231,8 @@ This project is released under the [MIT License](LICENSE).
 
 ## Contact
 
-For questions about the paper or code, please open an issue or contact Hang Zhao
-(hangzhao@mail.tsinghua.edu.cn).
+For questions about the paper or code, please open an issue or contact Runhan Huang
+(runhanhuang2004@gmail.com).
 
 ## Acknowledgements
 
