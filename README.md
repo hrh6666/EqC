@@ -3,16 +3,16 @@
 # EqC: Equilibrium Energy Control for Introspective Lifelong Robot Learning
 
 **Haodong Yang**<sup>1,\*</sup> &nbsp;
-**Runhan Huang**<sup>1,\*,†</sup> &nbsp;
+[**Runhan Huang**](https://hrh6666.github.io/)<sup>1,\*,†</sup> &nbsp;
 **Bowen Zhang**<sup>1,2,\*</sup> &nbsp;
 **Iofai Lei**<sup>1,\*</sup> &nbsp;
-**Zunzhe Zhang**<sup>1</sup>
+[**Zunzhe Zhang**](https://scholar.google.com/citations?user=2W320-8AAAAJ&hl=en)<sup>1</sup>
 <br>
-**Xiangcheng Zhang**<sup>1</sup> &nbsp;
-**Shaoting Zhu**<sup>1,2</sup> &nbsp;
-**Linzhan Mou**<sup>3</sup> &nbsp;
-**Yicheng Liu**<sup>1,2</sup> &nbsp;
-**Hang Zhao**<sup>1,2,‡</sup>
+[**Xiangcheng Zhang**](https://scholar.google.com/citations?user=pBnAahcAAAAJ&hl=en)<sup>1</sup> &nbsp;
+[**Shaoting Zhu**](https://zst1406217.github.io/)<sup>1,2</sup> &nbsp;
+[**Linzhan Mou**](https://linzhanm.github.io/)<sup>3</sup> &nbsp;
+[**Yicheng Liu**](https://mrmoore98.github.io/liuyicheng/)<sup>1,2</sup> &nbsp;
+[**Hang Zhao**](https://hangzhaomit.github.io/)<sup>1,2,‡</sup>
 
 <sup>1</sup>Tsinghua University &nbsp;&nbsp;
 <sup>2</sup>Galaxea AI &nbsp;&nbsp;
@@ -223,16 +223,11 @@ inference seed, and the 32-step schedule in addition to the success rate.
 
 ## Citation
 
-If you find this work useful, please cite:
+BibTeX coming soon.
 
-```bibtex
-@article{yang2026eqc,
-  title   = {EqC: Equilibrium Energy Control for Introspective Lifelong Robot Learning},
-  author  = {Yang, Haodong and Huang, Runhan and Zhang, Bowen and Lei, Iofai and Zhang, Zunzhe and
-             Zhang, Xiangcheng and Zhu, Shaoting and Mou, Linzhan and Liu, Yicheng and Zhao, Hang},
-  year    = {2026}
-}
-```
+## License
+
+This project is released under the [MIT License](LICENSE).
 
 ## Contact
 
