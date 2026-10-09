@@ -42,7 +42,8 @@ This repository is the official implementation of EqC.
 - [x] EqC with Diffusion Transformer (DiT) policy on LIBERO
 - [ ] EqC with flow-matching VLA policies
 - [ ] OOD / failure detection with energy consistency
-- [ ] Real-world deployment on Galaxea G0.5 and π0.5
+- [ ] Real-world deployment with Galaxea G0.5
+- [ ] Real-world deployment with π0.5
 
 ## Installation
 
